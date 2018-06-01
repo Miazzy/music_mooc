@@ -6,9 +6,19 @@
 
 <script>
 import MusicList from 'components/music-list/music-list'
+import { mapGetters } from 'vuex'
+
 export default {
   components: {
     MusicList
+  },
+  computed: {
+    ...mapGetters([
+      'singer'
+    ])
+  },
+  created() {
+    console.log(this.singer)
   }
 }
 </script>
