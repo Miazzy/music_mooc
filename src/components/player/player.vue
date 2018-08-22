@@ -9,20 +9,20 @@
     >
       <div class="normal-player" v-show="fullScreen">
         <div class="background">
-          <img src="" alt="" width="100%" height="100%">
+          <img :src="currentSong.image" alt="" width="100%" height="100%">
         </div>
         <div class="top">
           <div class="back" @click="back">
             <i class="icon icon-back"></i>
           </div>
-          <h1 class="title"></h1>
-          <h2 class="subtitle"></h2>
+          <h1 class="title" v-html="currentSong.name"></h1>
+          <h2 class="subtitle" v-html="currentSong.singer"></h2>
         </div>
         <div class="middle">
           <div class="middle-l">
             <div class="cd-wrapper" ref="cdWrapper">
               <div class="cd">
-                <img src="" alt="" class="image">
+                <img :src="currentSong.image" alt="" class="image" :class="cdCls">
               </div>
             </div>
           </div>
@@ -36,7 +36,7 @@
               <i class="icon-prev"></i>
             </div>
             <div class="icon i-center">
-              <i class="icon-play"></i>
+              <i :class="playIcon" @click="togglePlaying"></i>
             </div>
             <div class="icon i-right">
               <i class="icon-next"></i>
@@ -53,19 +53,23 @@
       <div class="mini-player" v-show="!fullScreen" @click="open">
         <div class="icon">
           <div class="imgWrapper" ref="miniWrapper">
-            <img src="" alt="" width="40" height="40">
+            <img :src="currentSong.image" alt="" width="40" height="40">
           </div>
         </div>
         <div class="text">
-          <h2 class="name"></h2>
-          <p class="desc"></p>
+          <h2 class="name" v-html="currentSong.name"></h2>
+          <p class="desc" v-html="currentSong.singer"></p>
         </div>
-        <div class="control"></div>
+        <div class="control">
+          <i :class="miniIcon" @click.stop="togglePlaying"></i>
+        </div>
         <div class="control">
           <i class="icon-playlist"></i>
         </div>
       </div>
     </transition>
+
+    <audio ref="audio" :src="currentSong.url"></audio>
   </div>
 </template>
 
@@ -80,9 +84,20 @@
   export default {
     name: "player",
     computed: {
+      cdCls() {
+        return this.playing ? 'play' : ''
+      },
+      playIcon() {
+        return this.playing ? 'icon-pause' : 'icon-play'
+      },
+      miniIcon() {
+        return this.playing ? 'icon-pause-mini' : 'icon-play-mini'
+      },
       ...mapGetters([
         'fullScreen',
-        'playlist'
+        'playlist',
+        'currentSong',
+        'playing'
       ])
     },
     methods: {
@@ -151,9 +166,29 @@
           scale
         }
       },
+
+
+      togglePlaying() {
+        this.setPlayingState(!this.playing)
+      },
       ...mapMutations({
-        setFullScreen: 'SET_FULL_SCREEN'
+        setFullScreen: 'SET_FULL_SCREEN',
+        setPlayingState: 'SET_PLAYING_STATE'
       })
+    },
+    watch: {
+      currentSong(newSong, oldSong) {
+        const audio = this.$refs.audio
+        this.$nextTick(() => {
+          audio.play()
+        })
+      },
+      playing(newPlaying) {
+        const audio = this.$refs.audio
+        this.$nextTick(() => {
+          newPlaying ? audio.play() : audio.pause()
+        })
+      }
     }
   }
 </script>
