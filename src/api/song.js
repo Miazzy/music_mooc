@@ -1,9 +1,6 @@
-import { commonParams } from './config'
-import { getUid } from 'common/js/uid'
+import {commonParams, ERR_OK} from './config'
+import {getUid} from 'common/js/uid'
 import axios from 'axios'
-import { ERR_OK } from 'api/config'
-
-const debug = process.env.NODE_ENV !== 'production'
 
 export function getLyric(mid) {
   const url = debug ? '/api/lyric' : 'http://ustbhuangyi.com/music/api/lyric'
@@ -26,7 +23,7 @@ export function getLyric(mid) {
 }
 
 export function getSongsUrl(songs) {
-  const url = debug ? '/api/getPurlUrl' : 'http://ustbhuangyi.com/music/api/getPurlUrl'
+  const url = '/api/getPurlUrl'
 
   let mids = []
   let types = []
