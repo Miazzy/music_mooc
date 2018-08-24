@@ -28,6 +28,13 @@
           </div>
         </div>
         <div class="bottom">
+          <div class="progress-wrapper">
+            <span class="time time-l">{{formatTime(currentTime)}}</span>
+            <div class="progress-bar-wrapper">
+              <progress-bar></progress-bar>
+            </div>
+            <span class="time time-r">{{formatTime(currentSong.duration)}}</span>
+          </div>
           <div class="operators">
             <div class="icon i-left">
               <i class="icon-sequence"></i>
@@ -69,7 +76,7 @@
       </div>
     </transition>
 
-    <audio ref="audio" :src="currentSong.url" @playing="ready" @error="error"></audio>
+    <audio ref="audio" :src="currentSong.url" @playing="ready" @error="error" @timeupdate="updateTime"></audio>
   </div>
 </template>
 
@@ -77,15 +84,18 @@
   import {mapGetters, mapMutations} from 'vuex'
   import animations from 'create-keyframe-animation'
   import {prefixStyle} from 'common/js/dom'
+  import ProgressBar from 'base/progress-bar/progress-bar'
 
   const transform = prefixStyle('transform')
   const transitionDuration = prefixStyle('transitionDuration')
 
   export default {
     name: "player",
+    components: {ProgressBar},
     data() {
       return {
-        songReady: false
+        songReady: false,
+        currentTime: 0
       }
     },
     computed: {
@@ -214,6 +224,24 @@
       error() {
         this.songReady = true
       },
+      updateTime(e) {
+        this.currentTime = e.target.currentTime
+      },
+      formatTime(time) {
+        // Math.floor() 向下取整
+        time = time | 0
+        const minute = time / 60 | 0
+        const second = this._pad(time % 60)
+        return `${minute}:${second}`
+      },
+      _pad(num, n = 2) {
+        let len = num.toString().length
+        while (len < 2) {
+          num = '0' + num
+          len++
+        }
+        return num
+      },
       ...mapMutations({
         setFullScreen: 'SET_FULL_SCREEN',
         setPlayingState: 'SET_PLAYING_STATE',
@@ -237,6 +265,9 @@
           newPlaying ? audio.play() : audio.pause()
         })
       }
+    },
+    component:{
+      ProgressBar
     }
   }
 </script>
