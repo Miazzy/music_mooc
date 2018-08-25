@@ -3,7 +3,7 @@ import {getUid} from 'common/js/uid'
 import axios from 'axios'
 
 export function getLyric(mid) {
-  const url = debug ? '/api/lyric' : 'http://ustbhuangyi.com/music/api/lyric'
+  const url = '/api/lyric'
 
   const data = Object.assign({}, commonParams, {
     songmid: mid,

@@ -31,7 +31,7 @@
           <div class="progress-wrapper">
             <span class="time time-l">{{formatTime(currentTime)}}</span>
             <div class="progress-bar-wrapper">
-              <progress-bar></progress-bar>
+              <progress-bar :percent="percent"></progress-bar>
             </div>
             <span class="time time-r">{{formatTime(currentSong.duration)}}</span>
           </div>
@@ -110,6 +110,9 @@
       },
       disableCls() {
         return this.songReady ? '' : 'disable'
+      },
+      percent() {
+        return this.currentTime / this.currentSong.duration
       },
       ...mapGetters([
         'fullScreen',
@@ -266,7 +269,7 @@
         })
       }
     },
-    component:{
+    component: {
       ProgressBar
     }
   }
