@@ -31,7 +31,9 @@
           <div class="progress-wrapper">
             <span class="time time-l">{{formatTime(currentTime)}}</span>
             <div class="progress-bar-wrapper">
-              <progress-bar :percent="percent"></progress-bar>
+              <progress-bar :percent="percent"
+                            @percentChange="onProgressBarChange"
+              ></progress-bar>
             </div>
             <span class="time time-r">{{formatTime(currentSong.duration)}}</span>
           </div>
@@ -239,11 +241,16 @@
       },
       _pad(num, n = 2) {
         let len = num.toString().length
-        while (len < 2) {
+        while (len < n) {
           num = '0' + num
           len++
         }
         return num
+      },
+
+      onProgressBarChange(percent) {
+        const currentTime = this.currentSong.duration * percent
+        this.currentTime = this.$refs.audio.currentTime = currentTime
       },
       ...mapMutations({
         setFullScreen: 'SET_FULL_SCREEN',
@@ -253,6 +260,9 @@
     },
     watch: {
       currentSong(newSong, oldSong) {
+        if (newSong.id || newSong.url || newSong.id === oldSong.id) {
+          return
+        }
         this.songReady = false
         const audio = this.$refs.audio
         this.$nextTick(() => {

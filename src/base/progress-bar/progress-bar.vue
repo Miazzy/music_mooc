@@ -2,7 +2,11 @@
   <div class="progress-bar" ref="progressBar">
     <div class="bar-inner">
       <div class="progress" ref="progress"></div>
-      <div class="progress-btn-wrapper" ref="progressBtn">
+      <div class="progress-btn-wrapper" ref="progressBtn"
+           @touchstart.prevent="progressTouchStart"
+           @touchmove.prevent="progressTouchMove"
+           @touchend.prevent="progressTouchEnd"
+      >
         <div class="progress-btn"></div>
       </div>
     </div>
@@ -22,13 +26,45 @@
         default: 0
       }
     },
+    created() {
+      this.touch = {}
+    },
+    methods: {
+      progressTouchStart(e) {
+        this.touch.init = true
+        this.touch.startX = e.touches[0].pageX
+        this.touch.left = this.$refs.progress.clientWidth
+      },
+      progressTouchMove(e) {
+        if (!this.touch.init) {
+          return
+        }
+        const moveX = e.touches[0].pageX - this.touch.startX
+        const offsetWidth = Math.min(this.$refs.progressBar.clientWidth - progressBtnWidth, Math.max(0, this.touch.left + moveX))
+        this._offset(offsetWidth)
+      },
+      progressTouchEnd() {
+        this.touch.init = false
+        this._triggerPercent()
+      },
+      _offset(offsetWidth) {
+        this.$refs.progress.style.width = `${offsetWidth}px`
+        this.$refs.progressBtn.style[transform] = `translate3d(${offsetWidth}px,0,0)`
+      },
+      _triggerPercent() {
+        this.$emit('percentChange', this._getPercent())
+      },
+      _getPercent() {
+        const barWidth = this.$refs.progressBar.clientWidth - progressBtnWidth
+        return this.$refs.progress.clientWidth / barWidth
+      }
+    },
     watch: {
       percent(newPercent) {
-        if (newPercent >= 0) {
+        if (newPercent >= 0 && !this.touch.init) {
           const barWidth = this.$refs.progressBar.clientWidth - progressBtnWidth
           const offsetWidth = newPercent * barWidth
-          this.$refs.progress.style.width = `${offsetWidth}px`
-          this.$refs.progressBtn.style[transform] = `translate3d(${offsetWidth}px,0,0)`
+          this._offset(offsetWidth)
         }
       }
     }
