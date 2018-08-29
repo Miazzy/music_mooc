@@ -251,6 +251,9 @@
       onProgressBarChange(percent) {
         const currentTime = this.currentSong.duration * percent
         this.currentTime = this.$refs.audio.currentTime = currentTime
+        if (!this.playing) {
+          this.togglePlaying()
+        }
       },
       ...mapMutations({
         setFullScreen: 'SET_FULL_SCREEN',
@@ -260,9 +263,6 @@
     },
     watch: {
       currentSong(newSong, oldSong) {
-        if (newSong.id || newSong.url || newSong.id === oldSong.id) {
-          return
-        }
         this.songReady = false
         const audio = this.$refs.audio
         this.$nextTick(() => {
