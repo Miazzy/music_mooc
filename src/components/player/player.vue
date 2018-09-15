@@ -93,6 +93,7 @@
   import ProgressCircle from 'base/progress-circle/progress-circle'
   import {playMode} from 'common/js/config'
   import {shuffle} from 'common/js/util'
+  import Lyric from 'lyric-parser'
 
   const transform = prefixStyle('transform')
   const transitionDuration = prefixStyle('transitionDuration')
@@ -103,7 +104,8 @@
     data() {
       return {
         songReady: false,
-        currentTime: 0
+        currentTime: 0,
+        currentLyric: null
       }
     },
     computed: {
@@ -300,6 +302,15 @@
         this.setCurrentIndex(index)
       },
 
+      getLyric() {
+        this.currentSong.getLyric().then((lyric) => {
+          if (this.currentSong.lyric !== lyric) {
+            return
+          }
+          this.currentLyric = new Lyric(lyric)
+        })
+      },
+
       ...mapMutations({
         setFullScreen: 'SET_FULL_SCREEN',
         setPlayingState: 'SET_PLAYING_STATE',
@@ -310,13 +321,14 @@
     },
     watch: {
       currentSong(newSong, oldSong) {
-        if (newSong.id === oldSong.id) {
+        if (!newSong.id || !newSong.url || newSong.id === oldSong.id) {
           return
         }
         this.songReady = false
         const audio = this.$refs.audio
         this.$nextTick(() => {
           audio.play()
+          this.getLyric()
         })
       },
       playing(newPlaying) {
