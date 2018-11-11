@@ -19,7 +19,7 @@
     <scroll class="list" :data="songs" :probe-type="probeType" :listen-scroll="listenScroll" @scroll="scroll"
             ref="list">
       <div class="song-list-wrapper">
-        <song-list :songs="songs" @select="selectItem"/>
+        <song-list :songs="songs" :rank="rank" @select="selectItem"/>
       </div>
       <div class="loading-container" v-show="!songs.length">
         <loading/>
@@ -53,6 +53,10 @@
         type: Array,
         default: []
       },
+      rank: {
+        type: Boolean,
+        default: false
+      }
     },
     computed: {
       bgStyle() {
