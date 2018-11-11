@@ -8,7 +8,7 @@
           @beforeScroll="listScroll"
   >
     <ul class="suggest-list">
-      <li @click="selectItem(item)" class="suggest-item" v-for="item in result">
+      <li @click="selectItem(item)" class="suggest-item" v-for="(item,index) in result" :key="index">
         <div class="icon">
           <i :class="getIconCls(item)"></i>
         </div>
@@ -24,14 +24,14 @@
   </scroll>
 </template>
 
-<script type="text/ecmascript-6">
+<script>
   import Scroll from 'base/scroll/scroll'
   import Loading from 'base/loading/loading'
   import NoResult from 'base/no-result/no-result'
-  import { search } from 'api/search'
-  import { ERR_OK } from 'api/config'
-  import { createSong, isValidMusic, processSongsUrl } from 'common/js/song'
-  import { mapMutations, mapActions } from 'vuex'
+  import {search} from 'api/search'
+  import {ERR_OK} from 'api/config'
+  import {createSong, isValidMusic, processSongsUrl} from 'common/js/song'
+  import {mapMutations, mapActions} from 'vuex'
   import Singer from 'common/js/singer'
 
   const TYPE_SINGER = 'singer'

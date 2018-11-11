@@ -1,14 +1,63 @@
 <template>
   <div class="search">
-    <div class="search-box-wrapper"></div>
-    <div class="shortcut-wrapper"></div>
-    <div class="search-result"></div>
+    <div class="search-box-wrapper">
+      <search-box ref="searchBox" @query="onQueryChange"/>
+    </div>
+    <div class="shortcut-wrapper" v-show="!query">
+      <scroll class="shortcut">
+        <div>
+          <div class="hot-key">
+            <h1 class="title">热门搜索</h1>
+            <ul>
+              <li class="item" v-for="(item, index) in hotkey" :key="index" @click="addQuery(item.k)">
+                <span>{{item.k}}</span>
+              </li>
+            </ul>
+          </div>
+          <div class="search-history"></div>
+        </div>
+      </scroll>
+    </div>
+    <div class="search-result" v-show="query">
+      <suggest :query="query"/>
+    </div>
     <router-view/>
   </div>
 </template>
 
 <script>
-  export default {}
+  import SearchBox from 'base/search-box/search-box'
+  import Suggest from 'components/suggest/suggest'
+  import Scroll from 'base/scroll/scroll'
+  import {getHotKey} from 'api/search'
+  import {ERR_OK} from 'api/config'
+  import {searchMixin} from 'common/js/mixin'
+
+  export default {
+    mixins: [searchMixin],
+    data() {
+      return {
+        hotkey: [],
+      }
+    },
+    created() {
+      this._getHotKey()
+    },
+    methods: {
+      _getHotKey() {
+        getHotKey().then(res => {
+          if (res.code === ERR_OK) {
+            this.hotkey = res.data.hotkey.slice(0, 10)
+          }
+        })
+      },
+    },
+    components: {
+      SearchBox,
+      Suggest,
+      Scroll,
+    }
+  }
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">

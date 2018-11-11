@@ -106,15 +106,14 @@ export const searchMixin = {
     ])
   },
   methods: {
+    addQuery(query) {
+      this.$refs.searchBox.setQuery(query)
+    },
     onQueryChange(query) {
-      // 处理带空格的情况
       this.query = query.trim()
     },
     blurInput() {
       this.$refs.searchBox.blur()
-    },
-    addQuery(query) {
-      this.$refs.searchBox.setQuery(query)
     },
     saveSearch() {
       this.saveSearchHistory(this.query)
