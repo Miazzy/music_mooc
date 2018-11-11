@@ -762,7 +762,7 @@
           font-size 32px
           position absolute
           left 0
-          top 0
+          top 1px
 
   @keyframes rotate
     0%
