@@ -52,9 +52,11 @@
     height: 40px
     background: $color-highlight-background
     border-radius: 6px
+
     .icon-search
       font-size: 24px
       color: $color-background
+
     .box
       flex: 1
       margin: 0 5px
@@ -63,8 +65,10 @@
       color: $color-text
       font-size: $font-size-medium
       outline: 0
+
       &::placeholder
         color: $color-text-d
+
     .icon-dismiss
       font-size: 16px
       color: $color-background
